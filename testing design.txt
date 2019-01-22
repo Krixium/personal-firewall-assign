@@ -1,0 +1,46 @@
+// Input
+test name, test description, rule, tool used, expected result, test command to run
+
+// Output
+Test:
+[test name]
+
+Test Description:
+[test description here]
+
+Rule:
+[rule here]
+
+Tool Used:
+[tool used]
+
+Expected Result:
+[expected result here]
+
+Pass or Fail:
+[generated result here]
+
+iptables before:
+[generated results here]
+
+iptables after:
+[generated results here]
+
+Proof:
+Screenshot can be found at [screenshot filename here]
+Packet capture can be found at [packet capture name here]
+
+// Pseudocode
+clear
+start tcpdump
+clear
+run test command
+screenshot test command result
+stop tcpdump
+clear
+
+
+// Commands
+test command    ->      hping3 192.168.1.10 -S -a 192.168.1.5 -p 80
+screenshot      ->      import -window root -crop '960x980+0+0' image.png
+packet capture  ->      tcpdump -F filter -w output.pcap

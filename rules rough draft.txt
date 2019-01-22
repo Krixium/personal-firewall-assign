@@ -1,0 +1,41 @@
+drop all
+
+incoming
+    tcp, src port = 22 or dst port = 22, accept
+    udp, src port = 22 or dst port = 22, accept
+    tcp, src port = 80 or dst port = 80, accept
+    udp, src port = 80 or dst port = 80, accept
+    tcp, src port = 443 or dst port = 443, accept
+    udp, src port = 443 or dst port = 443, accept
+    tcp, src port = 0:1024, dst port = 80, drop
+    udp, src port = 0:1024, dst port = 80, drop
+    tcp, src port = 0, drop
+    udp, src port = 0, drop
+    tcp, src port = 22 or dst port = 22, jump ssh
+    udp, src port = 22 or dst port = 22, jump ssh
+    tcp, src port = 80 or dst port = 80, jump www
+    udp, src port = 80 or dst port = 80, jump www  
+    tcp, src port = 443 or dst port = 443, jump www
+    udp, src port = 443 or dst port = 443, jump www
+
+outgoing
+    tcp, src ip = this, src port = 22 or dst port = 22, accept
+    udp, src ip = this, src port = 22 or dst port = 22, accept
+    tcp, src ip = this, src port = 80 or dst port = 80, accept
+    udp, src ip = this, src port = 80 or dst port = 80, accept
+    tcp, src ip = this, src port = 443 or dst port = 443, accept
+    udp, src ip = this, src port = 443 or dst port = 443, accept
+    tcp, src ip = this, dst port = 0, drop
+    udp, src ip = this, dst port = 0, drop
+    tcp, src port = 22 or dst port = 22, jump ssh
+    udp, src port = 22 or dst port = 22, jump ssh
+    tcp, src port = 80 or dst port = 80, jump www
+    udp, src port = 80 or dst port = 80, jump www  
+    tcp, src port = 443 or dst port = 443, jump www
+    udp, src port = 443 or dst port = 443, jump www
+
+forwarding
+
+www
+
+ssh
