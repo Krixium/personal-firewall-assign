@@ -20,24 +20,24 @@ Expected Result:
 Pass or Fail:
 [generated result here]
 
-iptables before:
-[generated results here]
-
-iptables after:
-[generated results here]
-
 Proof:
 Screenshot can be found at [screenshot filename here]
 Packet capture can be found at [packet capture name here]
 
 // Pseudocode
 clear
-start tcpdump
+tcpdump& -F filter -w output.pcap
 clear
-run test command
-screenshot test command result
-stop tcpdump
+./test-script.sh
+exit_status = $?
+import -window root -crop '960x980+0+0' result.png
 clear
+kill $(ps -e | pgrep tcpdump)
+clear
+if exit_status == 0
+    result=pass
+else
+    result=fail
 
 
 // Commands
