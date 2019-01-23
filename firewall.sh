@@ -1,83 +1,77 @@
 #!/bin/sh
 
-############ functions ###########
-# tells the firewall to link port $1 to chain $2 for both tcp and udp
-# chain $2 must already be created
-account_port()
-{
-	iptables -A INPUT -m tcp -p tcp --sport $1 -j $2
-	iptables -A INPUT -m tcp -p tcp --dport $1 -j $2
-	iptables -A INPUT -m udp -p udp --sport $1 -j $2 
-	iptables -A INPUT -m udp -p udp --dport $1 -j $2
+# globals
+TCP='-m tcp -p tcp'
+UDP='-m udp -p udp'
+default_policy=DROP
+default_chain_policy=DROP
+default_chains=(INPUT FORWARD OUTPUT)
+chain_names=(ssh www)
 
-	iptables -A OUTPUT -m tcp -p tcp --sport $1 -j $2
-	iptables -A OUTPUT -m tcp -p tcp --dport $1 -j $2
-	iptables -A OUTPUT -m udp -p udp --sport $1 -j $2 
-	iptables -A OUTPUT -m udp -p udp --dport $1 -j $2
+############ functions ###########
+# sends all traffic from port $1 to chain $2
+# chain $2 must already be created
+link_port_to_chain()
+{
+    iptables -A INPUT $TCP --sport $1 -j $2
+    iptables -A INPUT $TCP --dport $1 -j $2
+    iptables -A INPUT $UDP --sport $1 -j $2 
+    iptables -A INPUT $UDP --dport $1 -j $2
+
+    iptables -A OUTPUT $TCP --sport $1 -j $2
+    iptables -A OUTPUT $TCP --dport $1 -j $2
+    iptables -A OUTPUT $UDP --sport $1 -j $2 
+    iptables -A OUTPUT $UDP --dport $1 -j $2
 }
 
-
-# globals
-local_address=192.168.0.17
-default_chains=(INPUT FORWARD OUTPUT)
-default_policy=DROP
-allow_incoming=(22 53 80 443)
-allow_outgoing=(22 53 80 443)
+# accepts incoming traffic that has source or destination port set to $1 for both tcp and udp
+# the rule is applied to chain $2
+accept_incoming_with_port()
+{
+    iptables -A $2 $TCP --sport $1 -j ACCEPT
+    iptables -A $2 $TCP --dport $1 -j ACCEPT
+    iptables -A $2 $UDP --sport $1 -j ACCEPT
+    iptables -A $2 $UDP --dport $1 -j ACCEPT
+}
 
 # set default policy
+echo "setting default policy ..."
 for chain in ${default_chains[*]}
 do
     iptables -P $chain $default_policy
 done
 
-
-########### generic rules ##########
-# allow incoming ports
-for port in ${allow_incoming[*]}
+# create account chains and set the default chain policy
+echo "creating accounting chains ..."
+for c in ${chain_names[*]}
 do
-	# tcp
-    iptables -A INPUT -m tcp -p tcp --sport $port -j ACCEPT
-    iptables -A INPUT -m tcp -p tcp --dport $port -j ACCEPT
-	# udp
-    iptables -A INPUT -m udp -p udp --sport $port -j ACCEPT
-    iptables -A INPUT -m udp -p udp --dport $port -j ACCEPT
+    iptables -N $c
 done
 
-# allow outgoing ports
-for port in ${allow_outgoing[*]}
-do
-	# tcp
-    iptables -A OUTPUT -m tcp -p tcp --dport $port -j ACCEPT
-    iptables -A OUTPUT -m tcp -p tcp --sport $port -j ACCEPT
-	# udp
-    iptables -A OUTPUT -m udp -p udp --dport $port -j ACCEPT
-    iptables -A OUTPUT -m udp -p udp --sport $port -j ACCEPT
-done
+# redirect default chains to accounting chains
+echo "linking accounting chains ..."
+link_port_to_chain 22 ssh
+link_port_to_chain 80 www
+link_port_to_chain 443 www
 
+# setting generic rules
+echo "setting generic rules ..."
+accept_incoming_with_port 53 INPUT
+accept_incoming_with_port 67:68 INPUT
 
-########## special rules ##########
-# drop http request from low ports
-iptables -A INPUT -m tcp -p tcp --dport 80 --sport 0:1024 -j DROP
-iptables -A INPUT -m udp -p udp --dport 80 --sport 0:1024 -j DROP
+accept_incoming_with_port 22 ssh
+accept_incoming_with_port 80 www
+accept_incoming_with_port 443 www
 
-# drop packets with port 0
-iptables -A INPUT -m tcp -p tcp --sport 0 -j DROP
-iptables -A INPUT -m udp -p udp --sport 0 -j DROP
-iptables -A OUTPUT -m tcp -p tcp --dport 0 -j DROP
-iptables -A OUTPUT -m udp -p udp --dport 0 -j DROP
-
-
-########## accounting  ##########
-# create chains
-iptables -N ssh
-iptables -N www
-iptables -A ssh -j ACCEPT
-iptables -A www -j ACCEPT
-
-account_port 80 www
-account_port 443 www
-account_port 22 ssh
-
+# special rules
+echo "setting special rules ..."
+iptables -A INPUT $TCP --sport 0 -j DROP
+iptables -A INPUT $UDP --sport 0 -j DROP
+iptables -A OUTPUT $TCP --dport 0 -j DROP
+iptables -A OUTPUT $UDP --dport 0 -j DROP
+iptables -A www $TCP --dport 80 --sport 0:1023 -j DROP
+iptables -A www $UDP --dport 80 --sport 0:1023 -j DROP
 
 # display iptables
-iptables -L -v -n -x
+echo "displaying tables ..."
+iptables -L -xvn
