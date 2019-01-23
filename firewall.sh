@@ -24,9 +24,8 @@ link_port_to_chain()
     iptables -A OUTPUT $UDP --dport $1 -j $2
 }
 
-# accepts incoming traffic that has source or destination port set to $1 for both tcp and udp
-# the rule is applied to chain $2
-accept_incoming_with_port()
+# accepts any packet, tcp or udp, on chain $2 with port $1
+accept_port_on_chain()
 {
     iptables -A $2 $TCP --sport $1 -j ACCEPT
     iptables -A $2 $TCP --dport $1 -j ACCEPT
@@ -56,12 +55,14 @@ link_port_to_chain 443 www
 
 # setting generic rules
 echo "setting generic rules ..."
-accept_incoming_with_port 53 INPUT
-accept_incoming_with_port 67:68 INPUT
+accept_port_on_chain 53 INPUT
+accept_port_on_chain 53 OUTPUT
+accept_port_on_chain 67:68 INPUT
+accept_port_on_chain 67:68 OUTPUT
 
-accept_incoming_with_port 22 ssh
-accept_incoming_with_port 80 www
-accept_incoming_with_port 443 www
+accept_port_on_chain 22 ssh
+accept_port_on_chain 80 www
+accept_port_on_chain 443 www
 
 # special rules
 echo "setting special rules ..."
