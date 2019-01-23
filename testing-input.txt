@@ -1,7 +1,7 @@
-inbound-ssh, All incoming packets to port 22 are allowed through the firewall.,rule,hping3,All incoming ssh pakets are allowed through.,name of test script
-outbound-ssh, All outgoing packets to port 22 are allowed through the firewall.,rule,hping3,All outgoing ssh packets are allowed through.,name of test script
-inbound-http, All inbound packetes to port 80 are allowed through the firewall.,rule,hping3,All incoming http packets are allowed through.,name of test script
-outbound-http, All outbound packets to port 80 are allowed through the firewall.,rule,hping3,All outgoing http packets are allowed through.,name of test script
-inbound-http-with-strange-source-port, Packets with a destination of port 80 and a source port that is greater than 1024 are blocked.,rule,hping3,All incoming http packetes with a source port less than 1024 is blocked.,name of test script
-inbound-to-reserved-port-0, Any incoming packet with source port 0 is blocked.,rule,hping3,All incoming packets to port 0 are blocked.,name of test script
-outbound-to-reserved-port-0, Any outbound packet with a destination of port 0 is blocked.,rule,hping3,All outgoing packets to port 0 are blocked.,name of test script
+inbound-ssh,All incoming packets to port 22 are allowed through the firewall.,rule,hping3,All incoming ssh pakets are allowed through.,name of test script
+outbound-ssh,All outgoing packets to port 22 are allowed through the firewall.,rule,hping3,All outgoing ssh packets are allowed through.,name of test script
+inbound-http,All inbound packetes to port 80 are allowed through the firewall.,rule,hping3,All incoming http packets are allowed through.,name of test script
+outbound-http,All outbound packets to port 80 are allowed through the firewall.,rule,hping3,All outgoing http packets are allowed through.,name of test script
+inbound-http-with-strange-source-port,Packets with a destination of port 80 and a source port that is greater than 1024 are blocked.,rule,hping3,All incoming http packetes with a source port less than 1024 is blocked.,name of test script
+inbound-to-reserved-port-0,Any incoming packet with source port 0 is blocked.,rule,hping3,All incoming packets to port 0 are blocked.,name of test script
+outbound-to-reserved-port-0,Any outbound packet with a destination of port 0 is blocked.,rule,hping3,All outgoing packets to port 0 are blocked.,name of test script
