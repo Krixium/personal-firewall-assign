@@ -1,46 +1,62 @@
 #!/bin/sh
 
-# arguements
-# $1: name of input file
-# $2: name of output file
+input_file=$1
+output_file=$2
 
-# global variables
-TEST_NAME='{ print $1 }'
-TEST_DESC='{ print $2 }'
-TEST_RULE='{ print $3 }'
-TEST_TOOL='{ print $4 }'
-TEST_EXP_RESULT='{ print $5 }'
-TEST_CMD='{ print $6 }'
-
-# functions
-# takes a single line from input file and run the test case
-# $1: the line from the input file
-run_test_case()
+# appends $1 to the output file
+output_to_file()
 {
-    echo "Test:"
-    echo $1 | awk -F',' "$TEST_NAME"
-    echo
-    echo "Test Description:"
-    echo $1 | awk -F',' "$TEST_DESC"
-    echo
-    echo "Rule:"
-    echo $1 | awk -F',' "$TEST_RULE"
-    echo
-    echo "Tool Used:"
-    echo $1 | awk -F',' "$TEST_TOOL"
-    echo
-    echo "Pass or Fail"
-    echo "[placeholder]"
-    echo
-    echo "Proof:"
-    echo "[placeholder]"
-    echo
-    echo
-    echo
-    echo
+    echo $1 >> $output_file
 }
+
+# clear output file
+echo "" > $output_file
 
 while read line
 do
-    run_test_case $line
+    test_name=$(echo $line | awk -F',' '{ print $1 }')
+    test_desc=$(echo $line | awk -F',' '{ print $2 }')
+    test_rule=$(echo $line | awk -F',' '{ print $3 }')
+    test_tool=$(echo $line | awk -F',' '{ print $4 }')
+    test_exp_result=$(echo $line | awk -F',' '{ print $5 }')
+    test_script=$(echo $line | awk -F',' '{ print $6 }')
+    test_filter=$(echo $line | awk -F',' '{ print $7 }')
+    test_screenshot="Screenshot: $test_name.png"
+    test_dump="tcpdump: $test_name.pcap"
+
+    clear
+    # start tcpdump
+    ./tcpdump& -F $test_filter -w $test_dump
+    clear
+    # run TEST_CMD
+    ./$test_script
+    # screen shot ouptut
+    import import -window root -crop '960x980+0+0' $test_screenshot
+    # stop tcpdump
+    kill $(ps -e | pgrep tcpdump)
+
+    output_to_file "Test:"
+    output_to_file "$test_name"
+    output_to_file
+    output_to_file "Test Description:"
+    output_to_file "$test_desc"
+    output_to_file
+    output_to_file "Rule:"
+    output_to_file "$test_rule"
+    output_to_file
+    output_to_file "Tool Used:"
+    output_to_file "$test_tool"
+    output_to_file
+    output_to_file "Expected Result:"
+    output_to_file "$test_exp_result"
+    output_to_file
+    output_to_file "Pass or Fail"
+    output_to_file "Pass"
+    output_to_file
+    output_to_file "Proof:"
+    output_to_file "$test_screenshot"
+    output_to_file "$test_dump"
+    output_to_file
+    output_to_file
+    output_to_file
 done < $1
