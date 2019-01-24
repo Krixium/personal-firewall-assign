@@ -33,6 +33,10 @@ accept_port_on_chain()
     iptables -A $2 $UDP --dport $1 -j ACCEPT
 }
 
+# flush old settings
+iptables -F
+iptables -X
+
 # set default policy
 echo "setting default policy ..."
 for chain in ${default_chains[*]}
