@@ -3,7 +3,7 @@ Test:
 inbound-ssh
 
 Test Description:
-All
+All incoming packets to port 22 are allowed through the firewall.
 
 Rule:
 rule
@@ -12,14 +12,14 @@ Tool Used:
 hping3
 
 Expected Result:
-All
+All incoming ssh pakets are allowed through.
 
 Pass or Fail
 Pass
 
 Proof:
-Screenshot: inbound-ssh.png
-tcpdump: inbound-ssh.pcap
+
+tcpdump: logs/inbound-ssh.pcap
 
 
 
@@ -27,7 +27,7 @@ Test:
 outbound-ssh
 
 Test Description:
-All
+All outgoing packets to port 22 are allowed through the firewall.
 
 Rule:
 rule
@@ -36,14 +36,14 @@ Tool Used:
 hping3
 
 Expected Result:
-All
+All outgoing ssh packets are allowed through.
 
 Pass or Fail
 Pass
 
 Proof:
-Screenshot: outbound-ssh.png
-tcpdump: outbound-ssh.pcap
+
+tcpdump: logs/outbound-ssh.pcap
 
 
 
@@ -51,7 +51,7 @@ Test:
 inbound-http
 
 Test Description:
-All
+All inbound packetes to port 80 are allowed through the firewall.
 
 Rule:
 rule
@@ -60,14 +60,14 @@ Tool Used:
 hping3
 
 Expected Result:
-All
+All incoming http packets are allowed through.
 
 Pass or Fail
 Pass
 
 Proof:
-Screenshot: inbound-http.png
-tcpdump: inbound-http.pcap
+
+tcpdump: logs/inbound-http.pcap
 
 
 
@@ -75,7 +75,7 @@ Test:
 outbound-http
 
 Test Description:
-All
+All outbound packets to port 80 are allowed through the firewall.
 
 Rule:
 rule
@@ -84,14 +84,14 @@ Tool Used:
 hping3
 
 Expected Result:
-All
+All outgoing http packets are allowed through.
 
 Pass or Fail
 Pass
 
 Proof:
-Screenshot: outbound-http.png
-tcpdump: outbound-http.pcap
+
+tcpdump: logs/outbound-http.pcap
 
 
 
@@ -99,7 +99,7 @@ Test:
 inbound-http-with-strange-source-port
 
 Test Description:
-Packets
+Packets with a destination of port 80 and a source port that is greater than 1024 are blocked.
 
 Rule:
 rule
@@ -108,14 +108,14 @@ Tool Used:
 hping3
 
 Expected Result:
-All
+All incoming http packetes with a source port less than 1024 is blocked.
 
 Pass or Fail
 Pass
 
 Proof:
-Screenshot: inbound-http-with-strange-source-port.png
-tcpdump: inbound-http-with-strange-source-port.pcap
+
+tcpdump: logs/inbound-http-with-strange-source-port.pcap
 
 
 
@@ -123,7 +123,7 @@ Test:
 inbound-to-reserved-port-0
 
 Test Description:
-Any
+Any incoming packet with source port 0 is blocked.
 
 Rule:
 rule
@@ -132,14 +132,14 @@ Tool Used:
 hping3
 
 Expected Result:
-All
+All incoming packets to port 0 are blocked.
 
 Pass or Fail
 Pass
 
 Proof:
-Screenshot: inbound-to-reserved-port-0.png
-tcpdump: inbound-to-reserved-port-0.pcap
+
+tcpdump: logs/inbound-to-reserved-port-0.pcap
 
 
 
@@ -147,7 +147,7 @@ Test:
 outbound-to-reserved-port-0
 
 Test Description:
-Any
+Any outbound packet with a destination of port 0 is blocked.
 
 Rule:
 rule
@@ -156,14 +156,14 @@ Tool Used:
 hping3
 
 Expected Result:
-All
+All outgoing packets to port 0 are blocked.
 
 Pass or Fail
 Pass
 
 Proof:
-Screenshot: outbound-to-reserved-port-0.png
-tcpdump: outbound-to-reserved-port-0.pcap
+
+tcpdump: logs/outbound-to-reserved-port-0.pcap
 
 
 

@@ -15,12 +15,12 @@ link_port_to_chain()
 {
     iptables -A INPUT $TCP --sport $1 -j $2
     iptables -A INPUT $TCP --dport $1 -j $2
-    iptables -A INPUT $UDP --sport $1 -j $2 
+    iptables -A INPUT $UDP --sport $1 -j $2
     iptables -A INPUT $UDP --dport $1 -j $2
 
     iptables -A OUTPUT $TCP --sport $1 -j $2
     iptables -A OUTPUT $TCP --dport $1 -j $2
-    iptables -A OUTPUT $UDP --sport $1 -j $2 
+    iptables -A OUTPUT $UDP --sport $1 -j $2
     iptables -A OUTPUT $UDP --dport $1 -j $2
 }
 

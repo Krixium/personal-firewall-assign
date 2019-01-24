@@ -1,3 +1,2 @@
 #!/bin/sh
-
-echo "hello"
+hping3 localhost -S -p 80 -c 1

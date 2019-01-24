@@ -12,6 +12,12 @@ output_to_file()
 # clear output file
 echo "" > $output_file
 
+# make dump and image folders
+rm -rf dumps
+rm -rf logs
+mkdir dumps
+mkdir logs
+
 while read line
 do
     test_name=$(echo $line | awk -F',' '{ print $1 }')
@@ -21,19 +27,16 @@ do
     test_exp_result=$(echo $line | awk -F',' '{ print $5 }')
     test_script=$(echo $line | awk -F',' '{ print $6 }')
     test_filter=$(echo $line | awk -F',' '{ print $7 }')
-    test_screenshot="Screenshot: $test_name.png"
-    test_dump="tcpdump: $test_name.pcap"
+    test_logs="logs: logs/$test_name.txt"
+    test_dump="tcpdump: logs/$test_name.pcap"
 
     clear
-    # start tcpdump
-    ./tcpdump& -F $test_filter -w $test_dump
+    tshark -q -a duration:2 -Y $test_filter -w "dumps/$test_name.pcap"&
+    ./$test_script > "logs/$test_name.txt"
+    sleep 3
     clear
-    # run TEST_CMD
-    ./$test_script
-    # screen shot ouptut
-    import import -window root -crop '960x980+0+0' $test_screenshot
-    # stop tcpdump
-    kill $(ps -e | pgrep tcpdump)
+    # import -window root -crop '960x980+0+0' "images/$test_name.png"
+    # kill $(ps -e | pgrep tshark)
 
     output_to_file "Test:"
     output_to_file "$test_name"
