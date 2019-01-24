@@ -32,6 +32,7 @@ accept_port_on_chain()
     iptables -A $2 $UDP --sport $1 -j ACCEPT
     iptables -A $2 $UDP --dport $1 -j ACCEPT
 }
+############ end of functions ###########
 
 # flush old settings
 iptables -F
